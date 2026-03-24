@@ -1,1 +1,113 @@
-<!-- Start writing your project code in this file! -->
+<meta name="color-scheme" content="dark">
+<p id="p1">     
+You are now going to create your character!
+<br>
+<br>
+Do you want to roll dice or allocate stats yourself?
+</p>
+<p id="buttons1">
+<button title="Roll a set of dice and see what happens", id="rollDiceButton" onclick="diceCharacterStat()">
+    Roll dice
+</button>
+<button title="Pick the stats yourself" id="allocateButton" onclick="allocateCharacterStat()">
+    Allocate
+</button>
+</p>
+<p hidden id="p2">
+    Hidden Text
+</p>
+<h1 hidden id="h1" >
+<p id="strengthText">Strength = 0</p>
+<p id="motoricsText">Motorics = 0</p>
+<p id="intuitionText">Intuition = 0</p>
+</h1>
+<p hidden id="p3">
+<button onclick="">
+    Continue
+</button>
+</p>
+<script>    //  Character creator
+var statArray = [];
+var callp1 = document.getElementById("p1");
+var callp2 = document.getElementById("p2");
+var callp3 = document.getElementById("p3")
+var callh1 = document.getElementById("h1");
+var callbuttons1 = document.getElementById("buttons1");
+var stats = {
+    strength: 0,
+    motorics: 0,
+    intuition:0    
+};
+var spendPoint = 30
+function addstat(stat){     //  input taken from **button function-name (...)**
+    if (spendPoint > 0){
+
+        stats[stat]++;  //  increase chosen stat
+        spendPoint--;   //  reduce spendable points
+
+        document.getElementById(stat + "Text").textContent =    //  **stat + "Text" is the same as <p id=...>** 
+            stat.charAt(0).toUpperCase() + stat.slice(1) + " = " + stats[stat];
+            // stat-first-letter-uppercase PLUS rest-of-stat PLUS "=" PLUS stat from stats-object 
+        document.getElementById("p2").textContent =
+            "Spendable Points = " + spendPoint;
+    }
+    else{
+        
+        alert("Not enough points");
+    }
+    
+};
+function reducestat(stat){
+if (stats[stat] > 0){
+
+    stats[stat]--;  //  reduce chosen stat
+    spendPoint++;   //  increase spendable points
+
+    document.getElementById(stat + "Text").textContent =    //  stat + "Text" is the same as <p id=...> 
+        stat.charAt(0).toUpperCase() + stat.slice(1) + " = " + stats[stat];     
+        // stat first letter uppercase PLUS rest of stat PLUS "=" PLUS stat from stats-object 
+
+         document.getElementById("p2").textContent =
+            "Spendable Points = " + spendPoint;
+    }
+    else{
+        alert(stat.charAt(0).toUpperCase() + stat.slice(1) + " is already at zero")
+    }
+    
+};
+function rollDice (diceType){
+   return Math.floor(Math.random()*diceType+1)
+};
+function diceCharacterStat(){   //  If *Roll dice* is pressed
+    for (var statLoop=0; statLoop<3; statLoop++) {
+        statArray.push(rollDice(20))
+    };
+    console.log("statArray = " + statArray);
+    callbuttons1.hidden = true;
+    callp1.textContent = "You can allocate these as you wish"
+    callp2.hidden = false;
+    callp2.textContent = "You rolled: " + statArray;
+    callh1.hidden = false;
+};
+function allocateCharacterStat(){   //  if *Allocate* is pressed
+    callp1.hidden = true
+    callbuttons1.innerHTML =
+    '<button onclick="addstat(\'strength\')">Strength +</button>'+
+    '<button onclick="addstat(\'motorics\')">Motorics +</button>'+
+    '<button onclick="addstat(\'intuition\')">Intuition +</button>'+
+    '<br>'+
+    '<button onclick="reducestat(\'strength\')">Strength -</button>'+
+    '<button onclick="reducestat(\'motorics\')">Motorics -</button>'+
+    '<button onclick="reducestat(\'intuition\')">Intuition -</button>';
+    callp2.hidden = false
+    callp2.textContent = "Current Points to Spend = " + spendPoint;
+    callh1.hidden = false
+    callh1.innerHTML =
+    '<p id="strengthText">Strength = 0</p>' +
+    '<p id="motoricsText">Motorics = 0</p>' +
+    '<p id="intuitionText">Intuition = 0</p>';
+    callp3.hidden = false
+};
+
+
+</script>
