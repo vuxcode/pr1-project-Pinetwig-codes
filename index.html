@@ -21,16 +21,29 @@ Do you want to roll dice or allocate stats yourself?
 <p id="motoricsText">Motorics = 0</p>
 <p id="intuitionText">Intuition = 0</p>
 </h1>
+<p hidden id="randomAllocate">
+<button onclick="randomAllocate('strength')">
+    Strength
+</button>
+<button onclick="randomAllocate('motorics')">
+    Motorics
+</button>
+<button onclick="randomAllocate('intuition')">
+    Intuition
+</button>
+</p>
 <p hidden id="p3">
 <button onclick="">
     Continue
 </button>
+
 </p>
 <script>    //  Character creator
-var statArray = [];
+var statArray = [];     //  results from diceCharacterStat
 var callp1 = document.getElementById("p1");
 var callp2 = document.getElementById("p2");
-var callp3 = document.getElementById("p3")
+var callp3 = document.getElementById("p3");
+var callAllocateButton = document.getElementById("randomAllocate")
 var callh1 = document.getElementById("h1");
 var callbuttons1 = document.getElementById("buttons1");
 var stats = {
@@ -79,8 +92,10 @@ function rollDice (diceType){
    return Math.floor(Math.random()*diceType+1)
 };
 function diceCharacterStat(){   //  If *Roll dice* is pressed
-    for (var statLoop=0; statLoop<3; statLoop++) {
+     while (statArray.length<3){
+        if (!statArray.includes(rollDice(20))){
         statArray.push(rollDice(20))
+        }
     };
     console.log("statArray = " + statArray);
     callbuttons1.hidden = true;
@@ -88,7 +103,15 @@ function diceCharacterStat(){   //  If *Roll dice* is pressed
     callp2.hidden = false;
     callp2.textContent = "You rolled: " + statArray;
     callh1.hidden = false;
+    callp3.hidden = false;
+    callAllocateButton.hidden = false;
 };
+function randomAllocate (stat){    //  Strength button in diceCharacterStat
+    var arrayRandom = Math.floor(Math.random() * statArray.length)
+    document.getElementById(stat + "Text").textContent =
+         stat.charAt(0).toUpperCase() + stat.slice(1) + " = " + statArray[arrayRandom]
+
+}
 function allocateCharacterStat(){   //  if *Allocate* is pressed
     callp1.hidden = true
     callbuttons1.innerHTML =
@@ -107,6 +130,7 @@ function allocateCharacterStat(){   //  if *Allocate* is pressed
     '<p id="motoricsText">Motorics = 0</p>' +
     '<p id="intuitionText">Intuition = 0</p>';
     callp3.hidden = false
+    
 };
 
 
