@@ -1,4 +1,7 @@
 <meta name="color-scheme" content="dark">
+<head></head>
+<body>
+<center>
 <p id="p1">     
 You are now going to create your character!
 <br>
@@ -31,27 +34,37 @@ Do you want to roll dice or allocate stats yourself?
 <button onclick="randomAllocate('intuition')">
     Intuition
 </button>
+<button onclick="resetAllocate()">
+    Reset
+</button>
 </p>
 <p hidden id="p3">
-<button onclick="">
+<button onclick="continueButton">
     Continue
 </button>
 
 </p>
+</center>
+</body>
+
 <script>    //  Character creator
 var statArray = [];     //  results from diceCharacterStat
+var strengthAllocated = false
+var motoricsAllocated = false
+var intuitionAllocated  = false
 var callp1 = document.getElementById("p1");
 var callp2 = document.getElementById("p2");
 var callp3 = document.getElementById("p3");
 var callAllocateButton = document.getElementById("randomAllocate")
 var callh1 = document.getElementById("h1");
 var callbuttons1 = document.getElementById("buttons1");
+var diceStoreAllocation = [];
 var stats = {
     strength: 0,
     motorics: 0,
     intuition:0    
 };
-var spendPoint = 30
+var spendPoint = 30;
 function addstat(stat){     //  input taken from **button function-name (...)**
     if (spendPoint > 0){
 
@@ -88,14 +101,16 @@ if (stats[stat] > 0){
     }
     
 };
-function rollDice (diceType){
+function rollDice (diceType){   //  Universal diceroller
    return Math.floor(Math.random()*diceType+1)
 };
 function diceCharacterStat(){   //  If *Roll dice* is pressed
-     while (statArray.length<3){
-        if (!statArray.includes(rollDice(20))){
-        statArray.push(rollDice(20))
-        }
+     while (statArray.length<3){    //  generates 3 random-nonduplicate numbers to statArray
+        var characterstatdiceroll = rollDice(20)
+        if (!statArray.includes(characterstatdiceroll)){
+        statArray.push(characterstatdiceroll)
+        
+        };
     };
     console.log("statArray = " + statArray);
     callbuttons1.hidden = true;
@@ -106,12 +121,26 @@ function diceCharacterStat(){   //  If *Roll dice* is pressed
     callp3.hidden = false;
     callAllocateButton.hidden = false;
 };
-function randomAllocate (stat){    //  Strength button in diceCharacterStat
+function randomAllocate (stat){    //  Strength, Motorics, Intuition buttons in diceCharacterStat
     var arrayRandom = Math.floor(Math.random() * statArray.length)
+    if (statArray==0){
+        document.getElementById(stat + "Text").textContent =
+         stat.charAt(0).toUpperCase() + stat.slice(1) + " = " + diceStoreAllocation[arrayRandom];
+         stats[stat]= diceStoreAllocation[arrayRandom];
+         diceStoreAllocation.splice(arrayRandom, 1);
+         statArray.push(diceStoreAllocation[arrayRandom]);
+    }
+    else {
     document.getElementById(stat + "Text").textContent =
-         stat.charAt(0).toUpperCase() + stat.slice(1) + " = " + statArray[arrayRandom]
-
-}
+         stat.charAt(0).toUpperCase() + stat.slice(1) + " = " + statArray[arrayRandom];
+    stats[stat]= statArray[arrayRandom];
+    diceStoreAllocation.push(statArray[arrayRandom]);
+    statArray.splice(arrayRandom, 1);
+    };
+    console.log("diceStore - " + diceStoreAllocation)
+    console.log("statArray - " + statArray)
+    console.log("---")
+};    
 function allocateCharacterStat(){   //  if *Allocate* is pressed
     callp1.hidden = true
     callbuttons1.innerHTML =
@@ -129,9 +158,14 @@ function allocateCharacterStat(){   //  if *Allocate* is pressed
     '<p id="strengthText">Strength = 0</p>' +
     '<p id="motoricsText">Motorics = 0</p>' +
     '<p id="intuitionText">Intuition = 0</p>';
-    callp3.hidden = false
-    
+    callp3.hidden = false    
 };
+function resetAllocate(){
 
+};
+function continueButton (){
+
+
+};
 
 </script>
