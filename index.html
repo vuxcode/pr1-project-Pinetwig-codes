@@ -1,6 +1,13 @@
 <meta name="color-scheme" content="dark">
 <head></head>
 <body>
+<div hidden id="playerStats" style="position: absolute; top: 20px; left: 20px;">
+    <h3>Character Stats</h3>
+        <p id="displayStrength">  </p>
+        <p id="displayMotorics">  </p>
+        <p id="displayIntuition"> </p>
+        <p style="color: red;" id="displayHealth">  </p>
+</div>
 <center>
 <p id="p1">     
 You are now going to create your character!
@@ -52,16 +59,44 @@ Do you want to roll dice or allocate stats yourself?
     Intuition
 </button>
 -->
-<button onclick="resetAllocate()">
-    Reset
-</button>
 </p>
 <p hidden id="p3">
 <button onclick="continueButton1()">
     Continue
 </button>
-
-</p>
+<p hidden id="p4">
+<button onclick="continueButton2()">
+    Continue
+</button>
+<div hidden id="mainText">  <!--  This is where the action happens  -->
+    <h1 id="mainHeader">Outdoors</h1>
+    <p id="mainText1">
+        You come to just outside of a picket fence. <br>
+        On the other side of said fence is a dirt path. <br>
+        At the end of said path is a house. <br><br>
+        You don't recognize this house, yet the door beckons you closer.<br>
+        You approach the door.
+    </p>
+        <button id="mainTextButton1" onclick="revealNextText(1)">Continue</button>
+    <p hidden id="mainText2">
+        The door looks heavy. Abnormally heavy. <br>
+        The air feels heavy. So does the darkness. So does the silence. <br> 
+        You don't know why, but you have a strong urge to enter this house.
+    </p>
+        <button hidden id="mainTextButton2" onclick="revealNextText(2)">Continue</button>
+    <p hidden id="mainText3">
+        You will have to decide whether to use Strength, Motorics or Intuition to enter this house. <br>
+        Your night has only begun.
+    </p>
+        <button hidden id="mainTextButton3" onclick="startSkillCheck()">Continue</button>
+</div>
+<div hidden id="skillCheck">
+    <h1>
+        <button id="skillCheckStrength" onclick="frontdoorCheck('strength')">Strength</button>
+        <button id="skillCheckMotorics" onclick="frontdoorCheck('motorics')">Motorics</button>
+        <button id="skillCheckIntuition" onclick="frontdoorCheck('intuition')">Intuition</button>
+    </h1>
+</div>
 </center>
 </body>
 
@@ -73,6 +108,7 @@ var intuitionAllocated  = false
 var callp1 = document.getElementById("p1");
 var callp2 = document.getElementById("p2");
 var callp3 = document.getElementById("p3");
+var callp4 = document.getElementById("p4");
 var callAllocateButton = document.getElementById("randomAllocate")
 var callh1 = document.getElementById("h1");
 var callbuttons1 = document.getElementById("buttons1");
@@ -83,6 +119,10 @@ var callToggle2 = document.getElementById("toggle2");
 var callToggleText2 = document.getElementById("toggleText2");
 var callToggle3 = document.getElementById("toggle3");
 var callToggleText3 = document.getElementById("toggleText3");
+var displayStrength = document.getElementById("displayStrength");
+var displayMotorics =  document.getElementById("displayMotorics");
+var displayIntuition = document.getElementById("displayIntuition");
+var displayHealth = document.getElementById("displayHealth");
 var diceStoreAllocation = [];
 var stats = {
     strength: 0,
@@ -91,7 +131,7 @@ var stats = {
     health:10   
 };
 var spendPoint = 30;
-function addstat(stat){     //  input taken from **button function-name (...)**
+function addstat(stat){     //  +buttons in Allocate
     if (spendPoint > 0){
 
         stats[stat]++;  //  increase chosen stat
@@ -109,7 +149,7 @@ function addstat(stat){     //  input taken from **button function-name (...)**
     }
     
 };
-function reducestat(stat){
+function reducestat(stat){  //  -buttons in Allocate
 if (stats[stat] > 0){
 
     stats[stat]--;  //  reduce chosen stat
@@ -196,26 +236,369 @@ function allocateCharacterStat(){   //  if *Allocate* is pressed
     '<p id="strengthText">Strength = 0</p>' +
     '<p id="motoricsText">Motorics = 0</p>' +
     '<p id="intuitionText">Intuition = 0</p>';
-    callp3.hidden = false    
+    callp4.hidden = false    
 };
-function resetAllocate(){
-
-};
-function continueButton1 (){
+function continueButton1 (){    //  Exit Roll dice Character Creator
     var finalStrength = Number(document.getElementById("strengthText").textContent.split(" = ")[1]);
     var finalMotorics = Number(document.getElementById("motoricsText").textContent.split(" = ")[1]);
     var finalIntuition = Number(document.getElementById("intuitionText").textContent.split(" = ")[1]);
     if (finalStrength !== finalMotorics && finalStrength !== finalIntuition && finalMotorics !== finalIntuition) {
             //  continue with program
+        stats["strength"]=finalStrength
+        stats["motorics"]=finalMotorics
+        stats["intuition"]=finalIntuition
+        if (confirm(`Your selected stats are:
+
+    Strength: ${stats.strength}
+    Motorics: ${stats.motorics}
+    Intuition: ${stats.intuition}    
+
+Are you sure?`)){    
+        //  continue with game
+        document.getElementById("playerStats").hidden=false
+        document.getElementById("toggleButton").hidden=true
+        callp3.hidden=true
+        callh1.hidden=true
+        callp1.hidden=true
+        callp2.hidden=true
+        updateCharStats()
+        document.getElementById("mainText").hidden=false
+    }
     }
     else{
         alert("No duplicates allowed. Reassign your die.")
-    }
-    console.log("Strength: " + finalStrength);
-    console.log("Motorics: " + finalMotorics);
-    console.log("Intuition: " + finalIntuition);
-    console.log("---");
+    };        
+};
+function continueButton2 (){    //  Exit Allocate Character Creator
+    var finalStrength = Number(document.getElementById("strengthText").textContent.split(" = ")[1]);
+    var finalMotorics = Number(document.getElementById("motoricsText").textContent.split(" = ")[1]);
+    var finalIntuition = Number(document.getElementById("intuitionText").textContent.split(" = ")[1]);
+    stats["strength"]=finalStrength
+    stats["motorics"]=finalMotorics
+    stats["intuition"]=finalIntuition
+    if (confirm(`Your selected stats are:
+
+    Strength: ${stats.strength}
+    Motorics: ${stats.motorics}
+    Intuition: ${stats.intuition}    
+
+Are you sure?`)){    
+        //  continue with game
+        document.getElementById("playerStats").hidden=false
+        callp2.hidden = true
+        callh1.hidden = true
+        callp4.hidden = true        
+        callbuttons1.hidden = true
+        updateCharStats();
+        document.getElementById("mainText").hidden=false
+    };
 };
 
+</script>
+<script>    //  Game systems
+var stateCounter = 0    //  Keeps track of player progress
+var currentScene = "frontDoor";    //   Keeps track of player position
 
+function updateCharStats (){    //  Display-text = Content of *stats*object
+    displayStrength.textContent="Strength: "+stats.strength;
+    displayMotorics.textContent="Motorics: "+stats.motorics;
+    displayIntuition.textContent="Intuition: "+stats.intuition;
+    displayHealth.textContent="Health: "+stats.health;
+};
+function resetPageText (){    // Empty screen
+    for (var counter = 3; counter>0; counter--){
+        document.getElementById("mainText"+counter).hidden=true;
+        document.getElementById("mainTextButton"+counter).hidden=true;
+        document.getElementById("mainTextButton"+counter).disabled=false;
+    };
+    document.getElementById("skillCheck").hidden=true; 
+};
+function revealNextText (currentText){  //  Reveals next text. Used in <div mainText>
+    var next = currentText+1
+    var pressedButton = document.getElementById("mainTextButton"+currentText);
+    var nextText = document.getElementById("mainText"+next);
+    var nextButton = document.getElementById("mainTextButton"+next);
+
+    pressedButton.disabled=true
+    nextText.hidden=false
+    nextButton.hidden=false
+
+    stateCounter++
+    console.log("PLAYER ACTIONS: "+stateCounter)
+};
+function startSkillCheck (){    //  Starts a skillcheck
+resetPageText();
+mainText1.hidden=false;
+mainText1.innerHTML=doorCheckText1;
+document.getElementById("skillCheck").hidden=false;
+};
+function takeDamage(amount){     //    Reduce stat.health
+    stats.health -= amount;
+    updateCharStats();
+};
+function loadScene(sceneName){  //  WIP Compact scene transition
+
+};
+function setSkillCheck (check){
+    document.getElementById("skillCheckStrength").onclick= function(){check('strength')}
+    document.getElementById("skillCheckMotorics").onclick= function(){check('motorics')}
+    document.getElementById("skillCheckIntuition").onclick= function(){check('intuition')}
+};
+function enableCheckButtons (){
+    document.getElementById("skillCheckStrength").disabled=false;
+    document.getElementById("skillCheckMotorics").disabled=false;
+    document.getElementById("skillCheckIntuition").disabled=false;
+};
+</script>
+<script>    //  Events
+var mainText = document.getElementById("mainText");
+var mainText1 = document.getElementById("mainText1");
+var mainText2 = document.getElementById("mainText2");
+var mainText3 = document.getElementById("mainText3");
+var mainHeader = document.getElementById("mainHeader");
+var mainTextButton1 = document.getElementById("mainTextButton1");
+var mainTextButton3 = document.getElementById("mainTextButton3");
+
+function frontdoorCheck (chosenStat){   //  Skillcheck
+    var difficulty = 20
+    var roll = rollDice(difficulty);
+    var total = roll + stats[chosenStat];
+
+    if (total >= difficulty) {
+        doorSuccess (chosenStat, total, roll, difficulty);
+    }
+    else {
+        doorFail(chosenStat, total, roll, difficulty);
+    };
+
+};
+function doorSuccess (chosenStat, total, roll, difficulty){    //   Success state
+    resetPageText();
+    mainText.hidden=false;
+    mainText1.hidden=false;
+    mainText2.hidden=false;
+    mainHeader.textContent="Success";
+    if (chosenStat == "strength"){
+            mainText1.innerHTML = "Strength + " + roll +" = "+ total + "<br>" + "You had to beat: " + difficulty
+            mainText2.innerHTML = strengthDoorSuccessText
+
+    }
+    if (chosenStat == "motorics"){
+            mainText1.innerHTML = "Motorics + " + roll +" = " + total + "<br>" + "You had to beat: " + difficulty
+            mainText2.innerHTML = motoricsDoorSuccessText
+    }
+    if (chosenStat == "intuition"){
+            mainText1.innerHTML = "Intuition + " + roll +" = "+ total + "<br>" + "You had to beat: " + difficulty
+            mainText2.innerHTML = intuitionDoorSuccessText
+    };
+    mainTextButton3.hidden=false
+    mainTextButton3.onclick= function (){doorFinished("success")};
+    enableCheckButtons();
+};
+function doorFail (chosenStat, total, roll, difficulty){    //  Fail state
+    resetPageText();
+    mainText.hidden=false;
+    mainText1.hidden=false;
+    mainText2.hidden=false;
+    mainHeader.textContent="Fail";
+    if (chosenStat == "strength"){
+        mainText1.innerHTML = "Strength + " + roll +" = "+ total + "<br>" + "You had to beat: " + difficulty
+        mainText2.innerHTML = strengthDoorFailText
+        takeDamage(1)
+        document.getElementById("skillCheckStrength").disabled=true
+    }
+    if (chosenStat == "motorics"){
+        mainText1.innerHTML = "Motorics + " + roll +" = "+ total + "<br>" + "You had to beat: " + difficulty
+        mainText2.innerHTML = motoricsDoorFailText
+        takeDamage(1)
+        document.getElementById("skillCheckMotorics").disabled=true
+    }
+    if (chosenStat == "intuition"){
+        mainText1.innerHTML = "Intuition + " + roll +" = "+ total + "<br>" + "You had to beat: " + difficulty
+        mainText2.innerHTML = intuitionDoorFailText
+        takeDamage(1)
+        document.getElementById("skillCheckIntuition").disabled=true
+    };
+    mainTextButton3.hidden=false
+    mainTextButton3.onclick = function (){doorFinished("fail")};
+};
+function doorFinished (state){    //    Resolution
+resetPageText();
+mainText.hidden=false;
+mainText1.hidden=false;
+mainTextButton1.hidden=false;
+if (state == "success") {
+    mainHeader.innerHTML = "Hallway"
+    currentScene = "hallway";
+    mainText1.innerHTML = hallwayText1;
+    mainText2.innerHTML = hallwayText2;
+    mainText3.innerHTML = hallwayText3;
+    setSkillCheck(shakyGroundCheck)
+    mainTextButton3.onclick= function(){startSkillCheck()};    
+    mainTextButton1.onclick = function(){revealNextText(1)};
+}
+
+if (state == "fail") {
+    mainHeader.innerHTML = "Outdoor";
+    mainText1.innerHTML = outdoorText3;
+    mainTextButton1.onclick = function(){startSkillCheck()};
+
+};
+};
+
+function shakyGroundCheck (chosenStat){
+    var difficulty = 25
+    var roll = rollDice(difficulty);
+    var total = roll + stats[chosenStat];
+    
+    if (total >= difficulty) {
+        shakySuccess (chosenStat, total, roll, difficulty)
+    }
+    else {
+        shakyFail (chosenStat, total, roll, difficulty)
+    }
+};
+function shakySuccess (chosenStat, total, roll, difficulty){
+    resetPageText();
+    mainText.hidden=false;
+    mainText1.hidden=false;
+    mainText2.hidden=false;
+    mainHeader.textContent="Success"
+    if (chosenStat == "strength"){
+            mainText1.innerHTML = "Strength + " + roll +" = "+ total + "<br>" + "You had to beat: " + difficulty
+            mainText2.innerHTML = strengthShakySuccessText
+
+    }
+    if (chosenStat == "motorics"){
+            mainText1.innerHTML = "Motorics + " + roll +" = " + total + "<br>" + "You had to beat: " + difficulty
+            mainText2.innerHTML = motoricsShakySuccessText
+    }
+    if (chosenStat == "intuition"){
+            mainText1.innerHTML = "Intuition + " + roll +" = "+ total + "<br>" + "You had to beat: " + difficulty
+            mainText2.innerHTML = intuitionShakySuccessText
+    };
+    mainTextButton3.hidden=false
+    mainTextButton3.onclick= function (){shakyFinished("success")};
+    enableCheckButtons()
+};
+function shakyFail (chosenStat, total, roll, difficulty){
+    resetPageText();
+    mainText.hidden=false;
+    mainText1.hidden=false;
+    mainText2.hidden=false;
+    mainHeader.textContent="Fail";
+    if (chosenStat == "strength"){
+        mainText1.innerHTML = "Strength + " + roll +" = "+ total + "<br>" + "You had to beat: " + difficulty
+        mainText2.innerHTML = strengthShakyFailText
+        takeDamage(3)
+        document.getElementById("skillCheckStrength").disabled=true
+    }
+    if (chosenStat == "motorics"){
+        mainText1.innerHTML = "Motorics + " + roll +" = "+ total + "<br>" + "You had to beat: " + difficulty
+        mainText2.innerHTML = motoricsShakyFailText
+        takeDamage(3)
+        document.getElementById("skillCheckMotorics").disabled=true
+    }
+    if (chosenStat == "intuition"){
+        mainText1.innerHTML = "Intuition + " + roll +" = "+ total + "<br>" + "You had to beat: " + difficulty
+        mainText2.innerHTML = intuitionShakyFailText
+        takeDamage(3)
+        document.getElementById("skillCheckIntuition").disabled=true
+    };
+    mainTextButton3.hidden=false
+    mainTextButton3.onclick = function (){shakyFinished("fail")};
+};
+function shakyFinished (state){
+    resetPageText();
+    mainText.hidden=false;
+    mainText1.hidden=false;
+    mainTextButton1.hidden=false;
+    if (state == "success") {
+    mainHeader.innerHTML = "Hallway"
+    mainText1.innerHTML = hallwayText4;
+    mainText2.innerHTML = hallwayText5;
+    mainText3.innerHTML = hallwayText6;
+    setSkillCheck(shakyGroundCheck)
+    mainTextButton3.onclick= function(){startSkillCheck()};    
+    mainTextButton1.onclick = function(){revealNextText(1)};
+    }
+    if (state == "fail") {
+    mainHeader.innerHTML = "Hallway";
+    mainText1.innerHTML = hallwayText3;
+    mainTextButton1.onclick = function(){startSkillCheck()};
+
+    };
+
+};
+</script>
+<script>    //  Text
+    //  Outdoors
+var outdoorText1 =
+    "You come to just outside of a picket fence."+"<br>"+
+    "On the other side of said fence is a dirt path."+"<br>"+
+    "At the end of said path is a house."+"<br>"+"<br>"+
+    "You don't recognize this house, yet the door beckons you closer."+"<br>"+
+    "You approach the door."
+var outdoorText2 =
+    "The door looks heavy. Abnormally heavy."+ "<br>"+
+    "The air feels heavy. So does the darkness. So does the silence."+"<br>"+ 
+    "You don't know why, but you have a strong urge to enter this house."
+var outdoorText3 =
+    "You will have to decide whether to use Strength, Motorics or Intuition to enter this house."+"<br>"+
+    "Your night has only begun."
+var doorCheckText1 =
+    "What skill do you use?"
+    //  doorCheck texts success
+var strengthDoorSuccessText =
+    "You slam your shoulder against the door as hard as you can muster."+"<br>"+
+    "The door gives way and reveals the mysteries hidden inside the house."+"<br>"+"<br>"+
+    "You proceed into the house."
+var motoricsDoorSuccessText =
+    "You dig out a pointed tool from you pocket and insert it into the heavy doors lock."+"<br>"+
+    "With little hastle you are able to unlock the door with a satisfying *click*."+"<br>"+ "<br>"+
+    "You proceed into the house."
+var intuitionDoorSuccessText =
+    "You realize the owners must have a spare key hidden somewhere."+"<br>"+
+    "Under a rock you find it. The key to the house. You slide it into the lock and twist it."+"<br>"+ "<br>"+
+    "You proceed into the house."
+    //  doorCheck texts fail
+var strengthDoorFailText =
+    "You slam your shoulder against the door as hard as you can muster." + "<br>" +
+    "The door stands firm and your shoulder does not. It cracks. It hurts."+"<br>"+
+    "You take 1 damage." 
+var motoricsDoorFailText =
+    "You fail to unlock door." + "<br>" + "You take 1 damage." 
+var intuitionDoorFailText =
+    "You fail to find key." + "<br>" + "You take 1 damage." 
+
+    //  Hallway
+var hallwayText1 = 
+    "You enter into a hallway." + "<br>" + "<br>" +
+    "The floorboards creek." + "<br>" +
+    "A sickening rotten aroma fills your very being."
+var hallwayText2 = 
+    "Suddenly the ground starts shaking."+"<br>"+
+    "The shaking increases, becoming more and more violent."
+var hallwayText3 =
+    "You don't have much time."+"<br>"+
+    "How do you chose to react?"
+var shakyGroundCheckText = 
+    "What will you do?"
+    // Shaky Ground check text Success
+var strengthShakySuccessText =
+    "You brace yourself"
+var motoricsShakySuccessText =
+    "You hide"
+var intuitionShakySuccessText =
+    "You find stable ground"
+    // Shaky Ground check text Fail
+var strengthShakyFailText =
+    "The roof caves in. One big piece of the ceiling hits you. A very big piece." + 
+    "<br>" + "You take 3 damage."
+var motoricsShakyFailText =
+    "Hiding does you no good. One big piece of the ceiling hits you. A very big piece." + 
+    "<br>" + "You take 3 damage."
+var intuitionShakyFailText =
+    "You cannot think of a solution, consumed by fear. One big piece of the ceiling hits you. A very big piece." + 
+    "<br>" + "You take 3 damage."
 </script>
