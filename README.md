@@ -18,12 +18,12 @@ The final program is not the goal! The aim of the project is to show how you hav
 
 ## Project Description
 
-This project is a HTML based RPG-like game experience inspired by Disco Elysium, Betrayal at the House on the Hill and DnD among others.
+This project is a HTML-based RPG-like game experience inspired by Disco Elysium, Betrayal at the House on the Hill and DnD among others.
 
 Player creates a simple character with different stat-values that are then tested through checks during gameplay.
 Stats include Strength, Motorics, Intuition and Health.
 
-The overall goal with the program was to learn JavaScript by experimenting with "game engine" like structure which align with my personal interests.
+The overall goal with the program was to learn JavaScript by experimenting with "game engine" like structure which aligns with my personal interests.
 
 ---
 
@@ -52,7 +52,7 @@ The biggest areas I am going to focus on right now include:
 
 - Abstracting repeated code into reusable functions.
 - Improving transition systems. Making it easier to add more content.
-- Rework text variables using arrays
+- Rework text handeling using arrays or objects.
 - Cleaning up HTML elements and overall making it look nicer using CSS.
 - Adding inventory system.
 - Adding interactive event history.
@@ -127,10 +127,10 @@ I definitely hit the required time spent on the project. And hope my work reflec
 
 ## Stats Explained
 
-**Strength**  Represents physical power and endurance.
-**Motorics**  Represents dexterity, coordination, and precision.
-**Intuition**  Represents awareness, perception, and problem solving.
-**Health**  Players current health points.
+**Strength** - Represents physical power and endurance.
+**Motorics** - Represents dexterity, coordination, and precision.
+**Intuition** - Represents awareness, perception, and problem solving.
+**Health** - Players current health points.
 
 ---
 
